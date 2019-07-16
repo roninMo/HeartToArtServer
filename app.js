@@ -8,6 +8,7 @@ var app = express();
  * Import the controllers *
 ***************************/
 var user = require('./controllers/usercontroller');
+var song = require('./controllers/songcontroller');
 
 
 
@@ -59,4 +60,6 @@ app.use('/api/test', function(req,res) {
  * Protected routes *
 **********************/
 // Import the authentication
-// app.use(require('./middleware/validatesession'));
+app.use(require('./middleware/validatesession'));
+
+app.use('/songs/', song);

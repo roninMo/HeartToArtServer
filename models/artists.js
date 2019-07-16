@@ -10,12 +10,10 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.STRING,
             required: true
         },
-        created_at: {
+        createdAt: {
             type: DataTypes.DATE,
             allowNull: false
-        }, 
-    }, { 
-        underscored: true 
+        }
     });
     return Artist;
 };
