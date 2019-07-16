@@ -20,7 +20,7 @@ const sequelize = new Sequelize('RedBadgeFinal', 'postgres', '12345', {
 
 
 
-// Connect all the models/tables in the database to a db object,
+    // Connect all the models/tables in the database to a db object,
 //so everything is accessible via one object
 const db = {};
 
@@ -32,12 +32,14 @@ db.artists = require('./models/artists')(sequelize, Sequelize);
 db.albums = require('./models/albums')(sequelize, Sequelize);
 db.songs = require('./models/songs')(sequelize, Sequelize);
 
+
+
 // Relations
 db.songs.belongsTo(db.albums);
 db.albums.hasMany(db.songs);
 db.albums.belongsTo(db.artists);
 db.artists.hasMany(db.albums);
-
+db.songs.hasOne(db.artists);
 
 // Export the db    
 module.exports = sequelize; 
