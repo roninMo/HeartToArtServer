@@ -2,32 +2,33 @@ var express = require('express');
 var router = express.Router();
 
 // Include the database
-var sequelize = require('../db');
+var db = require('../db');
 // Include validate session!
 var validateSession = require('../middleware/validatesession');
 
 // Bring in the models
-var Artist = sequelize.import('../models/artists');
-var Album = sequelize.import('../models/albums');
-var Song = sequelize.import('../models/songs');
-
+var Artist = db.import('../models/artists');
+var Album = db.import('../models/albums');
+var Song = db.import('../models/songs');
+var TestMod = db.import('../models/testMod.js');
 
 /***********************************
     Create Song - and attach the album/artist
  **********************************/
-router.create('/create', validateSession, (req, res) => { // We wanna create artist into album into song all interpolated
+router.post('/create', validateSession, (req, res) => { // We create artist into album into song all interpolated
                                         // pass the userid through the promise into the next model
     // Initialize given vars to put into each of the models
 
             // So this needs to be sent up to the server in a song object holding all the values
+                        // // NOTE: These are pulled straight from the client, we may need to change that to an object
     // Artist data
-    artistName = req.body.song.artistName;
+    artistName = req.body.artistName;
     // Album data
-    albumName = req.body.song.albumName;
-    albumImage = req.body.song.albumImage;
+    albumName = req.body.albumName;
+    albumImage = req.body.albumImage;
     // Song data 
-    songName = req.body.song.songName;
-    songLyrics = req.body.song.lyrics;
+    songName = req.body.songName;
+    songLyrics = req.body.lyrics;
     // Time created
     const createdAt = new Date();
 
@@ -70,6 +71,9 @@ router.create('/create', validateSession, (req, res) => { // We wanna create art
 });
 
 /***********************************
+                UPDATE SECTION
+ **********************************/
+/***********************************
     Update Song 
  **********************************/
 router.put('updateSong/:id', validateSession, (req, res) => {
@@ -108,8 +112,8 @@ router.put('updateAlbum/:id', validateSession, (req, res) => {
     var albumRef = req.params.id; // id from the route
 
      // Pull in the data from the client
-     albumName = req.body.song.albumName;
-     albumImage = req.body.song.albumImage;
+     albumName = req.body.album.albumName;
+     albumImage = req.body.album.albumImage;
 
 
     Album.update({
@@ -140,7 +144,7 @@ router.put('updateArtist/:id', validateSession, (req, res) => {
     var artistRef = req.params.id; // id from the route
 
      // Pull in the data from the client
-     artistName = req.body.song.artistName;
+     artistName = req.body.artist.artistName;
 
 
     Artist.update({
@@ -165,7 +169,9 @@ router.put('updateArtist/:id', validateSession, (req, res) => {
 
 
 
-
+/***********************************
+                DELETE SECTION
+ **********************************/
 /***********************************
     Delete Song
  **********************************/
@@ -221,6 +227,65 @@ router.delete('deleteArtist/:id', validateSession, (req, res) => {
         }
     )
 
+});
+
+/***********************************
+                GET SECTION 
+ **********************************/
+/***********************************
+    Find song (return all data)
+ **********************************/
+    // song > artist > album 
+
+
+/***********************************
+    Find album (return all data)
+ **********************************/
+    // album > song > artist 
+
+
+/***********************************
+    Find artist (return all data)
+ **********************************/
+    // artist > album > song
+
+
+
+
+/***********************************
+    EXPERIMENTAL STUFF, STRING ARR
+ **********************************/
+    // Test crud functions for a new model that will hold the verses and stuff to display the song in an orderly structure
+
+                                // Putting the array in the db
+router.post('/createTest', validateSession, (req, res) => {
+    var stringArray = req.body.lyrics.stringArray
+
+    TestMod.create({
+        stringArray: stringArray
+    })
+
+    .then( newArray => res.status(200).json(newArray) )
+    .catch( err => res.status(500).json({ error: err }) );
+});
+
+                                // Find all arrays 
+router.get('/readTest', validateSession, (req, res) => {
+    TestMod.findAll()
+
+    .then( stringArr => res.status(200).json(stringArr) )
+    .catch( err => res.status(500).json({ error: err }) );
+});
+
+                                // Delete the array from the db 
+router.delete('/deleteTest/:id', validateSession, (req, res) => {
+    // id from the route
+    var data = req.params.id;
+
+    TestMod.destroy({ where: {id: data} })
+
+    .then( moreData => res.status(200).send("successfully deleted!").json(moreData) )
+    .catch( err => res.status(500).json({ error: err }) );
 });
 
 module.exports = router;
