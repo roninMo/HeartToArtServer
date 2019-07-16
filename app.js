@@ -16,13 +16,13 @@ var song = require('./controllers/songcontroller');
 
 
 // We need to pull in the db before we do the routes
-var sequelize = require('./db');
+var db = require('./db'); // formerly known as db
 
 // We need to parse through the body of the application to retrieve data through requests
 var bodyParser = require('body-parser')
 
 // Sync all the defined models to the database
-sequelize.sync() // tip: {force: true} for resetting table data
+db.sync() // tip: {force: true} for resetting table data
 // (Initalize before all routes) Essential var(body-parser) that a lot of our subroutes will use
 app.use(bodyParser.json());
 
@@ -62,4 +62,4 @@ app.use('/api/test', function(req,res) {
 // Import the authentication
 app.use(require('./middleware/validatesession'));
 
-app.use('/songs/', song);
+app.use('/songs', song);
