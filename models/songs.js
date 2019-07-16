@@ -6,7 +6,7 @@ module.exports = function(sequelize, DataTypes) {
             defaultValue: DataTypes.UUIDV4,
             allowNull: false
         },
-        album_id: {
+        albumId: {
             type: DataTypes.UUID,
             allowNull: false
         },
@@ -17,12 +17,10 @@ module.exports = function(sequelize, DataTypes) {
         lyrics: {
             type: DataTypes.STRING(4321)
         },
-        created_at: {
+        createdAt: {
             type: DataTypes.DATE,
             allowNull: false
-        },
-    }, {
-        underscored: true
+        }
     });
     return Song;
 };
