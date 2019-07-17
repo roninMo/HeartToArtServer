@@ -6,12 +6,10 @@ var db = require('../db');
 // Include validate session!
 var validateSession = require('../middleware/validatesession');
 
-// Bring in the models
-var Artist = db.import('../models/artists');
-var Album = db.import('../models/albums');
-var Song = db.import('../models/songs');
-var TestMod = db.import('../models/testMod.js');
 
+/***********************************
+                CREATE SECTION 
+ **********************************/
 /***********************************
     Create Song - and attach the album/artist
  **********************************/
@@ -29,46 +27,147 @@ router.post('/create', validateSession, (req, res) => { // We create artist into
     // Song data 
     songName = req.body.songName;
     songLyrics = req.body.lyrics;
-    // Time created
-    const createdAt = new Date();
 
         /* We have to create a song that attaches everything together */
 
     // Create the artist 
     db.Artist.create({
         artistName: artistName,
-        createdAt: createdAt
     })
-    .then(artist => { // pass in the artist to create the album 
-        artistPass = json(artist); // turn the artist data into a json to pass in the id 
 
-        db.Album.create({
-            aritistId: artistPass.id,
+    .then(artist => { // pass in the artist to create the album 
+        console.log('artist init', artist);
+
+            // We connect the album data to the artist made with sequelize db association create(model) 
+            // Note this only works if you have the db associations setup like so 
+        artist.createAlbum({
             albumName: albumName,
             albumImage: albumImage,
-            createdAt: createdAt
         })
-
+        .then(album => { // pass in the album datat into the song 
+            console.log('album init', album);
     
-    })
-    .then(album => { // pass in the album datat into the song 
-        albumPass = json(album);
-
-        db.Song.create({
-            albumId: albumPass.id,
-            songName: songName,
-            lyrics: songLyrics,
-            createdAt: createdAt
+                // Here I did the same thing to pull in the data
+            album.createSong({
+                songName: songName,
+                lyrics: songLyrics,
+            })
+            .then( song => res.status(200).json(song) )
+    // .catch( err => res.status(500).json({ error: err }) )
+            .catch(err => console.log(err));
         })
+        .catch(err => console.log(err));
+    
 
-        console.log('artist: ', artist);
-        console.log('album: ', album);
     })
+    .catch(err => console.log(err));
 
-    .then( song => res.status(200).json(song) )
-    .catch( err => res.status(500).json({ error: err }) )
 
 });
+
+/***********************************
+    Create Song - and attach the album/artist
+ **********************************/
+    // Chaining posts together through association functions
+    // Clientside function that passes in all the required fetch functions (artist > album > song)
+
+
+
+    router.post('/createArtist', validateSession, (req, res) => {
+        // Artist data
+        artistName = req.body.artistName;
+        // Album data
+        albumName = req.body.albumName;
+        albumImage = req.body.albumImage;
+        // Song data 
+        songName = req.body.songName;
+        songLyrics = req.body.lyrics;
+    
+    
+        db.Artist.create({
+            artistName: artistName
+        })
+        
+        .then(artist => res.send(200).json({ artist: artist}))
+        .catch(err => console.log(err))
+    
+    
+    })
+    
+        // Then I wanna find a way to attach one piece of data to another through different routes
+    // router.post('/createAlbum', validateSession, (req, res) => {
+    //     // Artist data
+    //     artistName = req.body.artistName;
+    //     // Album data
+    //     albumName = req.body.albumName;
+    //     albumImage = req.body.albumImage;
+    //     // Song data 
+    //     songName = req.body.songName;
+    //     songLyrics = req.body.lyrics;
+    
+    //     db.Album.findOne(
+    //         { where: {albumName: albumName}},
+    //         {
+    //             include: [
+    //             {
+    //                 model: db.Album,
+    //                 include: [
+    //                     {
+    //                         model: db.Song
+    //                     }
+    //                 ]
+    //             }
+    //             ]
+    //         }
+    //     )
+    //     .then(found => {
+    //         res.send(found);
+    //         found.createSong()
+    //     })
+    //     .catch(err => console.log(err));
+    
+    // });
+    
+    
+    
+/***********************************
+                GET SECTION 
+ **********************************/
+/***********************************
+    Find song (return all data)
+ **********************************/
+    // song > artist > album 
+
+
+/***********************************
+    Find album (return all data)
+ **********************************/
+    // album > song > artist 
+
+
+/***********************************
+    Find artist (return all data)
+ **********************************/
+    // artist > album > song
+    /* Find all  */
+router.get('/allArtists', validateSession, (req, res) => {
+    db.Artist.findAll({
+        include: [
+            {
+                model: db.Album,
+                include: [
+                    {
+                        model: db.Song
+                    }
+                ]
+            }
+        ]
+    }).then(Artist => res.send(200).json(Artist))
+});
+    
+
+    /* Find one */
+
 
 /***********************************
                 UPDATE SECTION
@@ -228,27 +327,6 @@ router.delete('deleteArtist/:id', validateSession, (req, res) => {
     )
 
 });
-
-/***********************************
-                GET SECTION 
- **********************************/
-/***********************************
-    Find song (return all data)
- **********************************/
-    // song > artist > album 
-
-
-/***********************************
-    Find album (return all data)
- **********************************/
-    // album > song > artist 
-
-
-/***********************************
-    Find artist (return all data)
- **********************************/
-    // artist > album > song
-
 
 
 

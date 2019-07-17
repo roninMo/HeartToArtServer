@@ -2,14 +2,12 @@ var express = require('express');
 var router = express.Router();
 
 // Include the database
-var sequelize = require('../db');
-
-// Bring in the models
-var User = sequelize.import('../models/user');
+var db = require('../db');
 
 // Bring in the password encryption and webtoken for validating the session
 var bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
+
 
 
 /***********************************
@@ -21,7 +19,7 @@ var jwt = require('jsonwebtoken');
      var email = req.body.user.email;
      var password = req.body.user.password;
 
-     User.create({
+     db.User.create({
          username: username,
          email: email,
          passwordhash: bcrypt.hashSync(password, 10)
@@ -53,7 +51,7 @@ var jwt = require('jsonwebtoken');
  ** Create sign in endpoint: whew ** 
  **********************************/
 router.post('/login', (req, res) => {
-    User.findOne( {where: {username: req.body.user.username} })
+    db.User.findOne( {where: {username: req.body.user.username} })
 
     .then( // If you find a matching username
         function(user){

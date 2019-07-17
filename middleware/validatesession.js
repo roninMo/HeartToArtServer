@@ -1,7 +1,5 @@
 var jwt = require('jsonwebtoken');
-var sequelize = require('../db');
-var User = sequelize.import('../models/user');
-
+var db = require('../db');
 
 /****************************************
  * Validates the data and passes it onto the function 
@@ -19,7 +17,7 @@ module.exports = function(req, res, next) {
             console.log(sessionToken);
             jwt.verify(sessionToken, '12345', (err, decoded) => { // Decodes the token and sends it through a callback
                 if(decoded){
-                    User.findOne({ where: { id: decoded.id } }).then(user => { // If decoded passes a val back, then findOne will look for an id in the users table that matches the decoded.id 
+                    db.User.findOne({ where: { id: decoded.id } }).then(user => { // If decoded passes a val back, then findOne will look for an id in the users table that matches the decoded.id 
                         req.user = user;
                         next();
                     },

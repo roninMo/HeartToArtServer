@@ -22,15 +22,18 @@ const sequelize = new Sequelize('RedBadgeFinal', 'postgres', '12345', {
 
     // Connect all the models/tables in the database to a db object,
 //so everything is accessible via one object
-const db = {};
+const db = { };
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize; // This is server that connects to postgres
 
 // Models/Tables
+db.User = require('./models/user')(sequelize, Sequelize);
+
 db.Artist = require('./models/artists')(sequelize, Sequelize);
 db.Album = require('./models/albums')(sequelize, Sequelize);
 db.Song = require('./models/songs')(sequelize, Sequelize);
+db.TestMod = require('./models/testMod.js')(sequelize, Sequelize);
 
 
 
@@ -39,7 +42,9 @@ db.Song.belongsTo(db.Album);
 db.Album.hasMany(db.Song);
 db.Album.belongsTo(db.Artist);
 db.Artist.hasMany(db.Album);
-db.Song.hasOne(db.Artist);
+
+// db.Song.hasOne(db.Artist);
+// db.Artist.hasMany(db.Song);
 
 // Export the db    
-module.exports = sequelize; 
+module.exports = db; 
