@@ -33,11 +33,10 @@ var jwt = require('jsonwebtoken');
         //      {expiresIn: 60*60*24} // Lifecycle of token { time until it expires! }
         //     );
         
-        res.json({ // What the repsone will return  {an object holding this data: }
-            user: user, // The user we created
-            message: 'created user!', // a message saying it successfully went through
-            sessionToken: token // The token attached to the specific user created 
-        });
+        res.status(200).json({ // What the repsone will return  {an object holding this data: }
+            name: user, // The user we created
+            token: token // The token attached to the specific user created 
+        }).send("User successfully created!");
 
     }, 
     function error(err){            /* If the request goes through unsuccessfully: */
@@ -59,11 +58,10 @@ router.post('/login', (req, res) => {
                 bcrypt.compare(req.body.user.password, user.passwordhash, function(err, matches) {
                     if(matches) { // Password matches
                         var token = jwt.sign({id: user.id}, '12345', {expiresIn: 60*60*24});
-                        res.json({
-                            user: user,
-                            message: "Successfully authenticated!",
-                            sessionToken: token
-                        });
+                        res.status(200).json({ // What the repsone will return  {an object holding this data: }
+                            name: user, // The user we created
+                            token: token // The token attached to the specific user created 
+                        }).send("User successfully created!");
 
                     } else {  // If it doesn't match
                         res.status(502).send({ error: "Bad Gateway"});
