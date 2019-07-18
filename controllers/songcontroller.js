@@ -138,7 +138,7 @@ router.post('/create', validateSession, (req, res) => { // We create artist into
  **********************************/
 
      /* Find all  */
-router.get('artist/all', validateSession, (req, res) => {
+router.get('/artist/all', validateSession, (req, res) => {
     db.Artist.findAll({
         include: [
             {
@@ -182,15 +182,19 @@ router.get('/search/song', validateSession, (req, res) => {
         resObj = chop.forEach(element => {
             if(element.dataValues.albums != []) {
                 console.log(`${element.dataValues.id}> top layer element piece`, element.dataValues);
-                console.log(`${element.dataValues.id}>> album layer element piece`, element.dataValues.albums);
-                
-                chopped.push(element.dataValues);
+                console.log(`${element.dataValues.id}>> album layer element piece`, element.dataValues.albums[0]);
+                var holder = element.dataValues.albums[0];
+                console.log('holder! ', holder);
+
+                if(holder != null) {
+                    chopped.push(holder);
+                }
             }
         }) 
-        console.log(chopped)
+        res.send(chopped);
         return chopped;
     })
-    .then( songs => res.status(200).json({ songs: songs }) )
+    // .then( songs => res.status(200).json({ songs: songs }) )
 
     .catch( err => res.status(500).json({ error: err }) );
 });
@@ -245,12 +249,37 @@ router.get('/search/artist', validateSession, (req, res) => {
         where: { artistName: arSearch }
     })
 
-    .then(searchRes => res.status(200).json(searchRes))
+    .then(searchRes => res.status(200).json({artist: searchRes}))
     .catch(err => {
         res.status(500).json(err);
         console.log('console error holds more info on the error!', err);
     });
 });
+
+/*********************************************************************************************************
+    This is for :searchResults page: > When the user selects a song, it will pass the id into this fetch
+ ********************************************************************************************************/
+router.get('/search/:id', validateSession, (req, res) => {
+    var searchId = req.params.id; // id from the route
+
+    db.Artist.findOne({ // Find all that match our search
+        include: [ // First we pull in the includes aka the db associations, each model that's connected 
+            {
+                model: db.Album,
+                include: [
+                    {
+                        model: db.Song,
+                        where: { id: searchId}
+                    }
+                ]
+            }
+        ]
+    })
+
+    .then(song => res.status(200).json({song: song}))
+    .catch(err => console.log(err));
+});
+
 
 /***********************************
                 UPDATE SECTION
