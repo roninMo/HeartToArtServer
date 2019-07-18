@@ -138,7 +138,7 @@ router.post('/create', validateSession, (req, res) => { // We create artist into
  **********************************/
 
      /* Find all  */
-router.get('artist/all', validateSession, (req, res) => {
+router.get('/artist/all', validateSession, (req, res) => {
     db.Artist.findAll({
         include: [
             {
@@ -182,15 +182,19 @@ router.get('/search/song', validateSession, (req, res) => {
         resObj = chop.forEach(element => {
             if(element.dataValues.albums != []) {
                 console.log(`${element.dataValues.id}> top layer element piece`, element.dataValues);
-                console.log(`${element.dataValues.id}>> album layer element piece`, element.dataValues.albums);
-                
-                chopped.push(element.dataValues);
+                console.log(`${element.dataValues.id}>> album layer element piece`, element.dataValues.albums[0]);
+                var holder = element.dataValues.albums[0];
+                console.log('holder! ', holder);
+
+                if(holder != null) {
+                    chopped.push(holder);
+                }
             }
         }) 
-        console.log(chopped)
+        res.send(chopped);
         return chopped;
     })
-    .then( songs => res.status(200).json({ songs: songs }) )
+    // .then( songs => res.status(200).json({ songs: songs }) )
 
     .catch( err => res.status(500).json({ error: err }) );
 });
