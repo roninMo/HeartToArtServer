@@ -88,7 +88,7 @@ router.post('/create', validateSession, (req, res) => { // We create artist into
             artistName: artistName
         })
         
-        .then(artist => res.send(200).json({ artist: artist}))
+        .then(artist => res.status(200).json({ artist: artist}))
         .catch(err => console.log(err))
     
     
@@ -134,23 +134,11 @@ router.post('/create', validateSession, (req, res) => { // We create artist into
                 GET SECTION 
  **********************************/
 /***********************************
-    Find song (return all data)
+    Find all 
  **********************************/
-    // song > artist > album 
 
-
-/***********************************
-    Find album (return all data)
- **********************************/
-    // album > song > artist 
-
-
-/***********************************
-    Find artist (return all data)
- **********************************/
-    // artist > album > song
-    /* Find all  */
-router.get('/allArtists', validateSession, (req, res) => {
+     /* Find all  */
+router.get('artist/all', validateSession, (req, res) => {
     db.Artist.findAll({
         include: [
             {
@@ -162,12 +150,107 @@ router.get('/allArtists', validateSession, (req, res) => {
                 ]
             }
         ]
-    }).then(Artist => res.send(200).json(Artist))
+    })
+    .then( Artist => res.status(200).json({ artist: Artist }) )
+    .catch( err => res.status(500).json({error: err}) );
 });
     
+/***********************************
+    Find song (return all data)
+ **********************************/
+    // song > artist > album 
+router.get('/search/song', validateSession, (req, res) => {
+    var soSearch = req.body.songSearch;
 
-    /* Find one */
+    db.Artist.findAll({ // Find all that match our search
+        include: [ // First we pull in the includes aka the db associations, each model that's connected 
+            {
+                model: db.Album,
+                include: [
+                    {
+                        model: db.Song,
+                        where: { songName: soSearch}
+                    }
+                ]
+            }
+        ]
+    })
+    // WARNING: this dataset is returning every artist, but only attaching the album & song models to the ones where soSearch = songName. to fix this we're pulling in a promise with a function to chop out the data returns that don't match our search params by pushing the pieces that do have the data into a new array we'll return 
 
+    .then( chop => { // Chop out 
+        var chopped = [];
+        resObj = chop.forEach(element => {
+            if(element.dataValues.albums != []) {
+                console.log(`${element.dataValues.id}> top layer element piece`, element.dataValues);
+                console.log(`${element.dataValues.id}>> album layer element piece`, element.dataValues.albums);
+                
+                chopped.push(element.dataValues);
+            }
+        }) 
+        console.log(chopped)
+        return chopped;
+    })
+    .then( songs => res.status(200).json({ songs: songs }) )
+
+    .catch( err => res.status(500).json({ error: err }) );
+});
+
+/***********************************
+    Find album (return all data)
+ **********************************/
+    // album > song > artist 
+    router.get('/search/album', validateSession, (req, res) => {
+        var alSearch = req.body.albumSearch;
+    
+        db.Artist.findAll({ // Find all that match our search
+            include: [ // First we pull in the includes aka the db associations, each model that's connected 
+                {
+                    model: db.Album,
+                    where: { albumName: alSearch},
+                    include: [
+                        {
+                            model: db.Song
+                        }
+                    ]
+                }
+            ]
+        })
+
+        .then(searchRes => res.status(200).json(searchRes))
+        .catch(err => {
+            res.status(500).json(err);
+            console.log('console error holds more info on the error!', err);
+        });
+    });
+
+/***********************************
+    Find artist (return all data)
+ **********************************/
+    // artist > album > song
+
+router.get('/search/artist', validateSession, (req, res) => {
+    var arSearch = req.body.artistSearch;
+
+    db.Artist.findAll({
+        include: [
+            {
+                model: db.Album,
+                include: [
+                    {
+                        model: db.Song
+                    }
+                ]
+            }
+        ],
+        where: { artistName: arSearch }
+    })
+
+    .then(searchRes => res.status(200).json(searchRes))
+    .catch(err => {
+        res.status(500).json(err);
+        console.log('console error holds more info on the error!', err);
+    });
+});
 
 /***********************************
                 UPDATE SECTION
