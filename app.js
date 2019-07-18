@@ -8,28 +8,26 @@ var app = express();
  * Import the controllers *
 ***************************/
 var user = require('./controllers/usercontroller');
-
-//adding
+var song = require('./controllers/songcontroller');
 
 
 
 
 // We need to pull in the db before we do the routes
-var sequelize = require('./db');
+var db = require('./db'); // formerly known as db
 
-// We need to parse through the body of the application to retrieve data through requests
-var bodyParser = require('body-parser')
 
 // Sync all the defined models to the database
-sequelize.sync() // tip: {force: true} for resetting table data
-// (Initalize before all routes) Essential var(body-parser) that a lot of our subroutes will use
-app.use(bodyParser.json());
+db.sequelize.sync() // tip: {force: true} for resetting table data
 
 // We need out middleware for handling requests
 app.use(require('./middleware/headers'));
 
-
-
+app.use(require('express').json())
+// // We need to parse through the body of the application to retrieve data through requests
+// var bodyParser = require('body-parser');
+// (Initalize before all routes) Essential var(body-parser) that a lot of our subroutes will use
+// app.use(bodyParser.json());
 
 
 /********************
@@ -39,10 +37,10 @@ app.use('/user', user);
 
 
 
-
-
-
-
+/**********************
+ * Protected routes *
+**********************/
+app.use('/songs', song);
 
 
 
@@ -55,8 +53,3 @@ app.listen(3000, function() {
 app.use('/api/test', function(req,res) {
     res.send("This is data from the /api/test endpoint. It's from the server");
 });
-/**********************
- * Protected routes *
-**********************/
-// Import the authentication
-// app.use(require('./middleware/validatesession'));
