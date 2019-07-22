@@ -159,7 +159,7 @@ router.get('/artist/all', validateSession, (req, res) => {
     Find song (return all data)
  **********************************/
     // song > artist > album 
-router.get('/search/song', validateSession, (req, res) => {
+router.get('/search/song', (req, res) => {
     var soSearch = req.body.songSearch;
 
     db.Artist.findAll({ // Find all that match our search
@@ -180,16 +180,18 @@ router.get('/search/song', validateSession, (req, res) => {
     .then( chop => { // Chop out 
         var chopped = [];
         resObj = chop.forEach(element => {
-            if(element.dataValues.albums != []) {
-                console.log(`${element.dataValues.id}> top layer element piece`, element.dataValues);
-                console.log(`${element.dataValues.id}>> album layer element piece`, element.dataValues.albums[0]);
-                var holder = element.dataValues.albums[0];
-                console.log('holder! ', holder);
+                console.log('server data', JSON.stringify(element));
 
-                if(holder != null) {
-                    chopped.push(holder);
-                }
-            }
+                element.albums.forEach( album => {
+                    console.log('album data', JSON.stringify(album));
+
+                    album.songs.forEach( song => {
+                        console.log('song data', JSON.stringify(song));
+                        if(song.songName == soSearch) {
+                            chopped.push(element);
+                        }
+                    });
+                });             
         }) 
         res.send(chopped);
         return chopped;
