@@ -13,7 +13,8 @@ module.exports = function(sequelize, DataTypes) {
             allowNull: false
         },
         lyrics: {
-            type: DataTypes.STRING(4321)
+            type: DataTypes.STRING(4321),
+            allowNull: false
         },
 
     });

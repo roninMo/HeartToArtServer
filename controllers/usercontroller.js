@@ -26,7 +26,7 @@ var jwt = require('jsonwebtoken');
      })
      .then( function success(user){         /* If the request goes through successfully: */
 
-        var token = jwt.sign({ id: user.id }, '12345', {expiresIn: 60*60*24}); 
+        var token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {expiresIn: 60*60*24}); 
         //  var token = jwt.sign( // This creates a session token
         //      {id: user.id},  // Attaches the token to the user id
         //      process.env.JWT_SECRET, // This encrypts the token based on our given password
@@ -58,8 +58,9 @@ router.post('/login', (req, res) => {
             if(user) { // Compare the user password with inputted password
                 bcrypt.compare(req.body.password, user.passwordhash, function(err, matches) {
                     if(matches) { // Password matches
-                        var token = jwt.sign({id: user.id}, '12345', {expiresIn: 60*60*24});
+                        var token = jwt.sign({id: user.id}, process.env.JWT_SECRET, {expiresIn: 60*60*24});
                         console.log(user);
+
                         res.status(200).json({ // What the repsone will return  {an object holding this data: }
                             user: user.dataValues, // The user we created
                             token: token, // The token attached to the specific user created 
