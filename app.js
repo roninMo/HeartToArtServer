@@ -1,4 +1,3 @@
-// Initialize express and create an instance for it 
 require('dotenv').config();
 var express = require('express');
 var app = express();
