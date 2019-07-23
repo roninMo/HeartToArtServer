@@ -13,7 +13,7 @@ var validateSession = require('../middleware/validatesession');
 /***********************************
     Create Song - and attach the album/artist
  **********************************/
-router.post('/create', (req, res) => { // We create artist into album into song all interpolated
+router.post('/create', validateSession, (req, res) => { // We create artist into album into song all interpolated
                                         // pass the userid through the promise into the next model
     // Initialize given vars to put into each of the models
 
