@@ -15,8 +15,8 @@ var jwt = require('jsonwebtoken');
  **********************************/
 
  router.post('/signup', (req, res) => {
-     var username = req.body.user.username;
-     var email = req.body.user.email;
+     var username = req.body.username;
+     var email = req.body.email;
      var password = req.body.user.password;
 
      db.User.create({
@@ -26,7 +26,7 @@ var jwt = require('jsonwebtoken');
      })
      .then( function success(user){         /* If the request goes through successfully: */
 
-        var token = jwt.sign({ id: user.id }, 'JWT_SECRET', {expiresIn: 60*60*24}); 
+        var token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {expiresIn: 60*60*24}); 
         //  var token = jwt.sign( // This creates a session token
         //      {id: user.id},  // Attaches the token to the user id
         //      process.env.JWT_SECRET, // This encrypts the token based on our given password
@@ -50,14 +50,14 @@ var jwt = require('jsonwebtoken');
  ** Create sign in endpoint: whew ** 
  **********************************/
 router.post('/login', (req, res) => {
-    db.User.findOne( {where: {username: req.body.user.username} })
+    db.User.findOne( {where: {username: req.body.username} })
 
     .then( // If you find a matching username
         function(user){
             if(user) { // Compare the user password with inputted password
-                bcrypt.compare(req.body.user.password, user.passwordhash, function(err, matches) {
+                bcrypt.compare(req.body.password, user.passwordhash, function(err, matches) {
                     if(matches) { // Password matches
-                        var token = jwt.sign({id: user.id}, 'JWT_SECRET', {expiresIn: 60*60*24});
+                        var token = jwt.sign({id: user.id}, process.env.JWT_SECRET, {expiresIn: 60*60*24});
                         res.status(200).json({ // What the repsone will return  {an object holding this data: }
                             name: user, // The user we created
                             token: token // The token attached to the specific user created 
