@@ -46,8 +46,8 @@ app.use('/songs', song);
 
 
 
-app.listen(3000, function() {
-    console.log('App is listening on port 3000.');
+app.listen(4200, function() {
+    console.log('App is listening on port 4200.');
 });
 
 app.use('/api/test', function(req,res) {
