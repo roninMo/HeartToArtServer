@@ -35,8 +35,9 @@ var jwt = require('jsonwebtoken');
         
         res.status(200).json({ // What the repsone will return  {an object holding this data: }
             name: user, // The user we created
-            token: token // The token attached to the specific user created 
-        }).send("User successfully created!");
+            token: token, // The token attached to the specific user created 
+            message: "User successfully created"
+        })
 
     }, 
     function error(err){            /* If the request goes through unsuccessfully: */
@@ -60,8 +61,9 @@ router.post('/login', (req, res) => {
                         var token = jwt.sign({id: user.id}, process.env.JWT_SECRET, {expiresIn: 60*60*24});
                         res.status(200).json({ // What the repsone will return  {an object holding this data: }
                             name: user, // The user we created
-                            token: token // The token attached to the specific user created 
-                        }).send("User successfully created!");
+                            token: token, // The token attached to the specific user created 
+                            message: "User successfully logged in"
+                        })
 
                     } else {  // If it doesn't match
                         res.status(502).send({ error: "Bad Gateway"});
