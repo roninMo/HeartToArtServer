@@ -17,7 +17,7 @@ var jwt = require('jsonwebtoken');
  router.post('/signup', (req, res) => {
      var username = req.body.username;
      var email = req.body.email;
-     var password = req.body.user.password;
+     var password = req.body.password;
 
      db.User.create({
          username: username,
