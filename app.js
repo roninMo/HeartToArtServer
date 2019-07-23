@@ -46,7 +46,7 @@ app.use('/songs', song);
 
 
 
-app.listen(process.env.PORT || 4200, function() {
+app.listen(process.env.PORT || 3000, function() {
     console.log(`App is listening on port ${process.env.PORT}.`);
 });
 
