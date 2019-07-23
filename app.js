@@ -46,8 +46,8 @@ app.use('/songs', song);
 
 
 
-app.listen(4200, function() {
-    console.log('App is listening on port 4200.');
+app.listen(process.env.PORT || 4200, function() {
+    console.log(`App is listening on port ${process.env.PORT}.`);
 });
 
 app.use('/api/test', function(req,res) {
