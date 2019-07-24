@@ -24,7 +24,7 @@ var jwt = require('jsonwebtoken');
          email: email,
          passwordhash: bcrypt.hashSync(password, 10)
      })
-     .then( function success(user){         /* If the request goes through successfully: */
+     .then( function success(user){       /* If the request goes through successfully: */
 
         var token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {expiresIn: 60*60*24}); 
         //  var token = jwt.sign( // This creates a session token
