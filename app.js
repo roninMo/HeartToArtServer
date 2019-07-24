@@ -17,7 +17,7 @@ var db = require('./db'); // formerly known as db
 
 
 // Sync all the defined models to the database
-db.sequelize.sync() // tip: {force: true} for resetting table data
+db.sequelize.sync({force:true}) // tip: {force: true} for resetting table data
 
 // We need out middleware for handling requests
 app.use(require('./middleware/headers'));

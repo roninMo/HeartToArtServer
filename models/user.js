@@ -1,7 +1,22 @@
-module.exports = function(sequelize, DataTypes) {
-    return sequelize.define('user', {
-        username: DataTypes.STRING,
-        passwordhash: DataTypes.STRING,
-        email: DataTypes.STRING
-    });
-};
+
+module.exports = (sequelize, DataTypes) => {
+    return sequelize.define('user', {    
+            username: {
+                type: DataTypes.STRING,
+                unique: true,
+                allowNull: false
+            },
+            email: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                unique: true,
+                validate: {
+                    isEmail: true,
+                }
+            },
+            passwordhash: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            }
+        });
+    }
