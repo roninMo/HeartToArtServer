@@ -1,6 +1,7 @@
 var jwt = require('jsonwebtoken');
 var db = require('../db');
 
+
 /****************************************
  * Validates the data and passes it onto the function 
 ****************************************/
