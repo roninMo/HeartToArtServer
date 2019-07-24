@@ -1,4 +1,3 @@
-// Initialize express and create an instance for it 
 require('dotenv').config();
 var express = require('express');
 var app = express();
@@ -9,8 +8,6 @@ var app = express();
 ***************************/
 var user = require('./controllers/usercontroller');
 var song = require('./controllers/songcontroller');
-
-
 
 
 // We need to pull in the db before we do the routes
@@ -46,8 +43,8 @@ app.use('/songs', song);
 
 
 
-app.listen(3000, function() {
-    console.log('App is listening on port 3000.');
+app.listen(process.env.PORT || 3000, function() {
+    console.log(`App is listening on port ${process.env.PORT}.`);
 });
 
 app.use('/api/test', function(req,res) {
