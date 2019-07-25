@@ -159,8 +159,8 @@ router.get('/artist/all', validateSession, (req, res) => {
     Find song (return all data)
  **********************************/
     // song > artist > album 
-router.get('/search/song', (req, res) => {
-    var soSearch = req.body.songSearch;
+router.get('/search/song/:songSearch', (req, res) => {
+    var soSearch = req.params.songSearch;
 
     db.Artist.findAll({ // Find all that match our search
         include: [ // First we pull in the includes aka the db associations, each model that's connected 
@@ -289,15 +289,15 @@ router.get('/search/:id', validateSession, (req, res) => {
 /***********************************
     Update Song 
  **********************************/
-router.put('updateSong/:id', validateSession, (req, res) => {
+router.put('/updateSong/:id', validateSession, (req, res) => {
     var songRef = req.params.id; // id from the route
 
     // Pull in the data from the client
-    songName = req.body.song.songName;
-    lyrics = req.body.song.lyrics;
+    songName = req.body.songName;
+    lyrics = req.body.lyrics;
 
 
-    Song.update({
+    db.Song.update({
         songName: songName,
         lyrics: lyrics
     },
@@ -321,16 +321,16 @@ router.put('updateSong/:id', validateSession, (req, res) => {
 /***********************************
     Update Album 
  **********************************/
-router.put('updateAlbum/:id', validateSession, (req, res) => {
+router.put('/updateAlbum/:id', validateSession, (req, res) => {
     var albumRef = req.params.id; // id from the route
 
      // Pull in the data from the client
-     albumName = req.body.album.albumName;
-     albumImage = req.body.album.albumImage;
+     albumName = req.body.albumName;
+     albumImage = req.body.albumImage;
 
 
-    Album.update({
-        albumName: AlbumName,
+    db.Album.update({
+        albumName: albumName,
         albumImage: albumImage
     },
     {
@@ -353,14 +353,14 @@ router.put('updateAlbum/:id', validateSession, (req, res) => {
 /***********************************
     Update Artist
  **********************************/
-router.put('updateArtist/:id', validateSession, (req, res) => {
+router.put('/updateArtist/:id', validateSession, (req, res) => {
     var artistRef = req.params.id; // id from the route
 
      // Pull in the data from the client
-     artistName = req.body.artist.artistName;
+     artistName = req.body.artistName;
 
 
-    Artist.update({
+    db.Artist.update({
         artistName: artistName
     },
     {
@@ -388,10 +388,10 @@ router.put('updateArtist/:id', validateSession, (req, res) => {
 /***********************************
     Delete Song
  **********************************/
-router.delete('deleteSong/:id', validateSession, (req, res) => {
+router.delete('/deleteSong/:id', validateSession, (req, res) => {
     var routeRef = req.params.id; // id from the route
 
-    Song.destroy({ where: {id: routeRef} })
+    db.Song.destroy({ where: {id: routeRef} })
 
     .then(
         function deleteSuccess(data) {
@@ -407,10 +407,10 @@ router.delete('deleteSong/:id', validateSession, (req, res) => {
 /***********************************
     Delete Album
  **********************************/
-router.delete('deleteAlbum/:id', validateSession, (req, res) => {
+router.delete('/deleteAlbum/:id', validateSession, (req, res) => {
     var routeRef = req.params.id; // id from the route
 
-    Album.destroy({ where: {id: routeRef} })
+    db.Album.destroy({ where: {id: routeRef} })
 
     .then(
         function deleteSuccess(data) {
@@ -426,10 +426,10 @@ router.delete('deleteAlbum/:id', validateSession, (req, res) => {
 /***********************************
     Delete Artist
  **********************************/
-router.delete('deleteArtist/:id', validateSession, (req, res) => {
+router.delete('/deleteArtist/:id', validateSession, (req, res) => {
     var routeRef = req.params.id; // id from the route
 
-    Artist.destroy({ where: {id: routeRef} })
+    db.Artist.destroy({ where: {id: routeRef} })
 
     .then(
         function deleteSuccess(data) {
