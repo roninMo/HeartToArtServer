@@ -15,9 +15,9 @@ var jwt = require('jsonwebtoken');
  **********************************/
 
  router.post('/signup', (req, res) => {
-     var username = req.body.user.username;
-     var email = req.body.user.email;
-     var password = req.body.user.password;
+     var username = req.body.username;
+     var email = req.body.email;
+     var password = req.body.password;
 
      db.User.create({
          username: username,
@@ -33,11 +33,11 @@ var jwt = require('jsonwebtoken');
         //      {expiresIn: 60*60*24} // Lifecycle of token { time until it expires! }
         //     );
         
-        res.json({ // What the repsone will return  {an object holding this data: }
-            user: user, // The user we created
-            message: 'created user!', // a message saying it successfully went through
-            sessionToken: token // The token attached to the specific user created 
-        });
+        res.status(200).json({ // What the repsone will return  {an object holding this data: }
+            name: user.dataValues, // The user we created
+            token: token, // The token attached to the specific user created 
+            message: "User successfully created!"
+        })
 
     }, 
     function error(err){            /* If the request goes through unsuccessfully: */
@@ -51,19 +51,20 @@ var jwt = require('jsonwebtoken');
  ** Create sign in endpoint: whew ** 
  **********************************/
 router.post('/login', (req, res) => {
-    db.User.findOne( {where: {username: req.body.user.username} })
+    db.User.findOne( {where: {username: req.body.username} })
 
     .then( // If you find a matching username
         function(user){
             if(user) { // Compare the user password with inputted password
-                bcrypt.compare(req.body.user.password, user.passwordhash, function(err, matches) {
+                bcrypt.compare(req.body.password, user.passwordhash, function(err, matches) {
                     if(matches) { // Password matches
                         var token = jwt.sign({id: user.id}, '12345', {expiresIn: 60*60*24});
-                        res.json({
-                            user: user,
-                            message: "Successfully authenticated!",
-                            sessionToken: token
-                        });
+                        console.log(user);
+                        res.status(200).json({ // What the repsone will return  {an object holding this data: }
+                            user: user.dataValues, // The user we created
+                            token: token, // The token attached to the specific user created 
+                            message: "User successfully logged in"
+                        })
 
                     } else {  // If it doesn't match
                         res.status(502).send({ error: "Bad Gateway"});
