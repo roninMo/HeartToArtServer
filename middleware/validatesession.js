@@ -15,7 +15,7 @@ module.exports = function(req, res, next) {
         if (!sessionToken) return res.status(403).send({ auth: false, message: 'No token provied.'});
         else {
             console.log(sessionToken);
-            jwt.verify(sessionToken, '12345', (err, decoded) => { // Decodes the token and sends it through a callback
+            jwt.verify(sessionToken, process.env.JWT_SECRET, (err, decoded) => { // Decodes the token and sends it through a callback
                 if(decoded){
                     db.User.findOne({ where: { id: decoded.id } }).then(user => { // If decoded passes a val back, then findOne will look for an id in the users table that matches the decoded.id 
                         req.user = user;

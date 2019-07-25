@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 
 // Make an instance of sequelize to create a sequelize object se we can establish a connection to the server
-const sequelize = new Sequelize('RedBadgeFinal', 'postgres', '12345', {
+const sequelize = new Sequelize('RedBadgeFinal', 'postgres', '23BookisS7531', {
   host: 'localhost',
   dialect: 'postgres'
 });
